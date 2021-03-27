@@ -1,0 +1,5 @@
+nb-cli
+nonebot-adapter-cqhttp
+nonebot_plugin_apscheduler
+psutil
+numpy

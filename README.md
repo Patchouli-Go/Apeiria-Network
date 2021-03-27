@@ -5,7 +5,7 @@
 
 1. 创建python虚拟环境(可选) `python3 -m venv .venv`
     `source .venv/bin/activate` (激活虚拟环境)
-2. 安装环境 `pip install -r requirements.txt`
+2. 安装环境 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`
 3. 启动bot `nb run`
 
 ## Bot 配置
