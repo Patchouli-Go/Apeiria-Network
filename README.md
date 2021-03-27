@@ -12,8 +12,8 @@
 2. 安装依赖包 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`
 3. 启动 bot `nb run`
 
-为配合 Nonebot2 使用，还需要安装搭建 Go-Cqhttp 使用：
-http://blog.patchouli-go.cn:8109/?p=57
+为配合 Nonebot2 使用，还需要安装搭建 Go-Cqhttp 使用：https://github.com/Mrs4s/go-cqhttp  
+这是我的个人博客：http://blog.patchouli-go.cn:8109/?p=57
 
 ### 你事老手？
 
