@@ -16,7 +16,7 @@
 这是我的个人博客：http://blog.patchouli-go.cn:8109/?p=57
 
 ### 你事老手？
-
+（屎山，球放过）
 安装依赖包 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`  
 启动 bot `nb run`
 
