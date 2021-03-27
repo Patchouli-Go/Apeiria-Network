@@ -1,9 +1,9 @@
 # import nonebot
 from pathlib import Path
 from nonebot import on_command, get_driver
+from nonebot.adapters.cqhttp.message import Message
 from nonebot.typing import T_State
 from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.adapters.cqhttp.message import MessageSegment as Message
 
 from random import choice
 
@@ -20,7 +20,8 @@ config = Config(**global_config.dict())
 # def some_function():
 #     pass
 
-eat = on_command("eat", aliases = {'吃啥', '次啥', '恰饭', '干饭了'}, rule=None, priority=2)
+eat = on_command("eat", aliases={"吃啥", "次啥", "恰饭", "干饭了"}, rule=None, priority=2)
+
 
 @eat.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: T_State):
@@ -36,22 +37,13 @@ async def handle_first_receive(bot: Bot, event: Event, state: T_State):
     )
     await eat.finish(food)
 
+
 highperf = on_command("highperf", priority=2)
+
 
 @highperf.handle()
 async def _(bot: Bot, event: Event, state: T_State):
-    voice = (
-        Path(".")
-        / "apeiria_network"
-        / "data"
-        / "voice"
-        / "ATR_b101_013_高性能.wav"
-    )
+    voice = Path(".") / "apeiria_network" / "data" / "voice" / "ATR_b101_013_高性能.wav"
     voice = voice.resolve()
-    message_type = str(event.dict()["message_type"])
-    if message_type == "group":
-        group_id = str(event.dict()["group_id"])
-        await bot.call_api("send_group_msg", group_id=group_id, message=f"[CQ:record,file=file:///{voice}]")
-    elif message_type == "private":
-        user_id = event.get_user_id()
-        await bot.call_api(api="send_private_msg", user_id=user_id, message=f"[CQ:record,file=file:///{voice}]")
+    await highperf.finish(Message(f"[CQ:record,file=file:///{voice}]"))
+    
