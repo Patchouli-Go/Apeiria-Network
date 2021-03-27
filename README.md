@@ -6,9 +6,9 @@
 
 ### 对于初次使用 Nonebot2 框架的用户：
 
-1. 创建 python 虚拟环境(可选) 项目根目录键入 `python3 -m venv .venv`
-   Linux 下激活虚拟环境: `source .venv/bin/activate`
-   Windows 下激活虚拟环境: `/.venv/Scripts/activate.bat`
+1. 创建 python 虚拟环境(可选) 项目根目录键入 `python3 -m venv .venv`  
+   Linux 下激活虚拟环境: `source .venv/bin/activate`  
+   Windows 下激活虚拟环境: `/.venv/Scripts/activate.bat`  
 2. 安装依赖包 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`
 3. 启动 bot `nb run`
 
@@ -17,39 +17,39 @@ http://blog.patchouli-go.cn:8109/?p=57
 
 ### 你事老手？
 
-安装依赖包 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`
+安装依赖包 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`  
 启动 bot `nb run`
 
 ## 有哪些功能？
 
-1. 天气！
-   早上 8 点自动推送天气信息，要提前绑定所在城市
-   使用方式：`天气`就完事了
+1. 天气！  
+   早上 8 点自动推送天气信息，要提前绑定所在城市  
+   使用方式：`天气`就完事了  
    还有个`天气预报`预报七日内天气
-2. 状态！随手加了个 mcs 的，除了我应该没人用就是了）
+2. 状态！随手加了个 mcs 的，除了我应该没人用就是了）  
    `状态`
-3. 复读）三句复读一句，图片的懒了，没写
+3. 复读）三句复读一句，图片的懒了，没写  
    打开开关就是无情的复读机器（`ONrepeat`
-4. 开关
+4. 开关  
    `ON` `OFF`
-5. 其它，下面的配置项里面有
+5. 其它，下面的配置项里面有  
 
 ## Bot 配置
 
-使用前请填好.env 中的可配置项：
-带星号为必须
+使用前请填好.env 中的可配置项：  
+带星号为必须  
 
-你的 qq 账号\*:
+你的 qq 账号\*:  
 `SUPERUSERS=[""]`
 
-机器人 qq 号\*:
+机器人 qq 号\*:  
 `SELF_ID=''`
 
-天气 api key\*:
+天气 api key\*:  
 `WEATHER_KEY=''`
 
-1.5 小时喝水群号:
+1.5 小时喝水群号:  
 `DRINK_WATER=[""]`
 
-每日天气提醒 qq 号:
+每日天气提醒 qq 号:  
 `DAILY_WEATHER=[""]`
