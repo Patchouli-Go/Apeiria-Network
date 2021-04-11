@@ -81,13 +81,13 @@ async def handle_city(bot: Bot, event: Event, state: T_State):
         msg = "绑定成功，如果要更换绑定城市\n可使用[天气绑定 城市名]"
         await bot.send(event=event, message=msg)
 
-    message_type = str(event.dict()["message_type"])
-    dc = json.loads(weatherinfo.text)
-
     if responsecode == 555:
         await weather.finish(randomNegative() + "地名输入错误")
     elif responsecode == 403:
         await weather.finish(randomNegative() + "API访问次数用完了，请续费API")
+
+    message_type = str(event.dict()["message_type"])
+    dc = json.loads(weatherinfo.text)
 
     if message_type == "group":
         group_id = str(event.dict()["group_id"])
