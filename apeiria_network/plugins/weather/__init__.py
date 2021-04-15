@@ -45,7 +45,7 @@ weather = on_command("天气", rule=None, priority=2)
 async def handle_first_receive(bot: Bot, event: Event, state: T_State):
     args = str(event.get_message()).strip()  # 首次发送命令时跟随的参数，例：/天气 上海，则args为上海
     user_id = event.get_user_id()
-    area_reader = getAreaJson()
+    area_reader = getAreaJson()  # 从area.json读取绑定的天气数据
     if args:
         state["city"] = args  # 如果用户发送了参数则直接赋值
     elif user_id in area_reader:
