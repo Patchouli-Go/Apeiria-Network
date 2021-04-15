@@ -56,13 +56,13 @@ async def handle_first_receive(bot: Bot, event: Event, state: T_State):
 async def handle_city(bot: Bot, event: Event, state: T_State):
     startTime = time.perf_counter()
     cityname = state["city"]
+    # 判断是否二次查询
+    if cityname[0:2] == "天气":
+        cityname = str(cityname[2 : len(cityname)]).strip().replace(" ","")
     weatherinfo = weather_info(cityname, 0)
     responsecode = weatherinfo.status_code
     user_id = event.get_user_id()
     area_reader = getAreaJson()
-    # 判断是否二次查询
-    if cityname[0:2] == "天气":
-        cityname = str(cityname[2 : len(cityname)]).strip()
     if user_id not in area_reader:
         if responsecode == 555:
             await weather.finish(randomNegative() + "查询失败，地名输入错误")
@@ -252,23 +252,15 @@ async def handle_first_receive(bot: Bot, event: Event, state: T_State):
 async def handle_city(bot: Bot, event: Event, state: T_State):
     startTime = time.perf_counter()
     cityname = state["city"]
+    # 判断查询
+    if cityname[0:2] == "天气预报":
+        cityname = str(cityname[2 : len(cityname)]).strip().replace(" ","")
     weatherinfo = weather_info(cityname, 1)
     responsecode = weatherinfo.status_code
     user_id = event.get_user_id()
     area_reader = getAreaJson()
-    # 判断查询
-    if cityname[0:2] == "天气预报":
-        cityname = str(cityname[2 : len(cityname)]).strip()
-        # 第一次查询绑定
-        if user_id not in area_reader:
-            if responsecode == 555:
-                await weather_pre_report.finish(randomNegative() + "查询失败，地名输入错误")
-            elif responsecode == 403:
-                await weather_pre_report.finish(randomNegative() + "API访问次数用完了，请续费API")
-            _weather_bind(user=user_id, cityname=cityname)
-            msg = "绑定成功，如果要更换绑定城市\n可使用[天气绑定 城市名]"
     # 第一次查询绑定
-    elif user_id not in area_reader:
+    if user_id not in area_reader:
         if responsecode == 555:
             await weather_pre_report.finish(randomNegative() + "查询失败，地名输入错误")
         elif responsecode == 403:
