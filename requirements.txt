@@ -3,3 +3,4 @@ nonebot-adapter-cqhttp
 nonebot_plugin_apscheduler
 psutil
 numpy
+redis

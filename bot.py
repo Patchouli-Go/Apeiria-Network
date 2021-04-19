@@ -35,6 +35,7 @@ nonebot.load_plugin("apeiria_network.plugins.repeat")
 nonebot.load_plugin("apeiria_network.plugins.status")
 nonebot.load_plugin("apeiria_network.plugins.switch")
 nonebot.load_plugin("apeiria_network.plugins.chat")
+nonebot.load_plugin("apeiria_network.plugins.russian_roulette")
 # nonebot.load_plugins("apeiria_network/plugins")
 nonebot.load_from_toml("pyproject.toml")
 
