@@ -41,48 +41,45 @@ async def _(bot: Bot, event: Event, state: T_State):
     # 来源判断
     if message_type == "group":
         id = str(event.dict()["group_id"])
-        ru = Path(".") / "apeiria_network" / "config" / "ru" / "group" / "ru.json"
+        # ru = Path(".") / "apeiria_network" / "config" / "ru" / "group" / "ru.json"
     elif message_type == "private":
         id = event.get_user_id()
-        ru = Path(".") / "apeiria_network" / "config" / "ru" / "private" / "ru.json"
-    # strmsg = {id: [0, 0, 0, 0]}
-    # ru_status = strmsg[id][0]
-    # bullets_num = strmsg[id][1]
-    # shoot_times = strmsg[id][2]
-    # hit_times = strmsg[id][3]
+        # ru = Path(".") / "apeiria_network" / "config" / "ru" / "private" / "ru.json"
+    # strmsg = [0, 0, 0, 0]
+    # ru_status = strmsg[0]
+    # bullets_num = strmsg[1]
+    # shoot_times = strmsg[2]
+    # hit_times = strmsg[3]
 
-    # 为空或没有文件则创建一个空的
+    # 为None或没有则初始化
     try:
-        with open(ru, mode="r", encoding="utf-8") as ru_json:
-            strmsg = json.load(ru_json)
+        strmsg = r.get("ru"+id).split(',')
     except:
-        strmsg = {}
+        r.set("ru"+id, ','.join(['0','0','0','0']))
+        strmsg = r.get("ru"+id).split(',')
 
-    if id not in strmsg:
-        with open(ru, mode="w", encoding="utf-8") as ru_json_file_w:
-            strmsg.update({id: [0, 0, 0, 0]})
-            json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
     args = str(event.get_message()).strip()
     if args:
         # 子弹数非法结束
         if not (int(args) >= 1 and int(args) <= 6):
             await shoot.finish(randomNegative() + "请输入1到6以内的数字重试")
         # 判断会话状态是否为active
-        if strmsg[id][0] == 0:
+        if strmsg[0] == '0':
             # 否，则初始化数据，初始化 子弹数量，开枪次数，命中数。
-            strmsg[id][0] = 1
-            strmsg[id][1] = int(args)
-            strmsg[id][2] = 0
-            strmsg[id][3] = 0
+            strmsg[0] = '1'
+            strmsg[1] = args
+            strmsg[2] = '0'
+            strmsg[3] = '0'
             # print(strmsg)
-            ru_json_file_w = open(ru, mode="w", encoding="utf-8")
-            json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
+            # ru_json_file_w = open(ru, mode="w", encoding="utf-8")
+            # json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
+            r.set("ru"+id, ','.join(strmsg))
             r.set("death" + id, "")
             r.set("alive" + id, "")
             magazine = []
-            for i in range(0, 6 - strmsg[id][1]):
+            for i in range(0, 6 - int(strmsg[1])):
                 magazine.append("0")
-            for i in range(0, strmsg[id][1]):
+            for i in range(0, int(strmsg[1])):
                 magazine.insert(randint(0, len(magazine)), "1")
             r.set("magazine" + id, ",".join(magazine))
             bul = choice(
@@ -99,12 +96,12 @@ async def _(bot: Bot, event: Event, state: T_State):
             await shoot.finish("之前的转盘活动并没有迎来结局，请完成上一场活动之后再开始新的活动")
     else:
         # 判断会话状态是否为active
-        if strmsg[id][0] == 1:
-            state["bullets_num"] = strmsg[id][1]
-            state["ru"] = ru
+        if strmsg[0] == '1':
+            state["bullets_num"] = strmsg[1]
+            # state["ru"] = ru
             state["id"] = id
-        elif strmsg[id][0] == 0:
-            state["ru"] = ru
+        elif strmsg[0] == '0':
+            # state["ru"] = ru
             state["id"] = id
 
 
@@ -116,27 +113,25 @@ async def _(bot: Bot, event: Event, state: T_State):
         bullets_num = int(state["bullets_num"])
     except:
         await shoot.finish(randomNegative() + "请输入1到6以内的数字重试")
-    ru = state["ru"]
+    # ru = state["ru"]
     id = state["id"]
-    with open(ru, mode="r", encoding="utf-8") as ru_json:
-        strmsg = json.load(ru_json)
+    strmsg = r.get("ru"+id).split(',')
     # 子弹数非法结束
     if not (bullets_num >= 1 and bullets_num <= 6):
         await shoot.finish(randomNegative() + "请输入1到6以内的数字重试")
-    if strmsg[id][0] == 0:
+    if strmsg[0] == '0':
         # 初始化数据，初始化 子弹数量，开枪次数，命中数
-        strmsg[id][0] = 1
-        strmsg[id][1] = bullets_num
-        strmsg[id][2] = 0
-        strmsg[id][3] = 0
-        ru_json_file_w = open(ru, mode="w", encoding="utf-8")
-        json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
+        strmsg[0] = '1'
+        strmsg[1] = str(bullets_num)
+        strmsg[2] = '0'
+        strmsg[3] = '0'
+        r.set("ru"+id, ','.join(strmsg))
         r.set("death" + id, "")
         r.set("alive" + id, "")
         magazine = []
-        for i in range(0, 6 - strmsg[id][1]):
+        for i in range(0, 6 - int(strmsg[1])):
             magazine.append("0")
-        for i in range(0, strmsg[id][1]):
+        for i in range(0, int(strmsg[1])):
             magazine.insert(randint(0, len(magazine)), "1")
         r.set("magazine" + id, ",".join(magazine))
         bul = choice(
@@ -162,10 +157,9 @@ async def _(bot: Bot, event: Event, state: T_State):
         # 命中 开枪次数+1 击中+1
         magazine.pop(0)
         r.set("magazine" + id, ",".join(magazine))
-        strmsg[id][2] += 1
-        strmsg[id][3] += 1
-        ru_json_file_w = open(ru, mode="w", encoding="utf-8")
-        json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
+        strmsg[2] = str((int(strmsg[2])+1))
+        strmsg[3] = str((int(strmsg[3])+1))
+        r.set("ru"+id, ','.join(strmsg))
         msg = [
             ["很不幸，你死了"],
             ["砰！枪响人亡"],
@@ -198,9 +192,8 @@ async def _(bot: Bot, event: Event, state: T_State):
         # miss 开枪次数+1
         magazine.pop(0)
         r.set("magazine" + id, ",".join(magazine))
-        strmsg[id][2] += 1
-        ru_json_file_w = open(ru, mode="w", encoding="utf-8")
-        json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
+        strmsg[2] = str((int(strmsg[2])+1))
+        r.set("ru"+id, ','.join(strmsg))
         msg = [
             ["哦？你侥幸活了下来呢~"],
             ["砰！\n随着一声清脆的枪响，你...", "不好意思，念错了"],
@@ -230,11 +223,10 @@ async def _(bot: Bot, event: Event, state: T_State):
         r.set("alive" + id, r.get("alive" + id) + call + ",")
         for a in msg[randint(0, len(msg) - 1)]:
             await bot.send(event, a)
-    if strmsg[id][3] >= strmsg[id][1]:
+    if int(strmsg[3]) >= int(strmsg[1]):
         # 命中次数 == 子弹次数 结束会话
-        strmsg[id][0] = strmsg[id][1] = strmsg[id][2] = strmsg[id][3] = 0
-        ru_json_file_w = open(ru, mode="w", encoding="utf-8")
-        json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
+        strmsg[0] = strmsg[1] = strmsg[2] = strmsg[3] = '0'
+        r.set("ru"+id, ','.join(strmsg))
         death = r.get("death" + id).strip(",").split(",")
         alive = r.get("alive" + id).strip(",").split(",")
         count = {}
@@ -251,6 +243,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         # print(count)
         r.set("death" + id, "")
         r.set("alive" + id, "")
+        r.set("magzine" + id, "")
         msg = ""
         i = 0
         for c in count:
@@ -263,8 +256,32 @@ async def _(bot: Bot, event: Event, state: T_State):
     await bot.send(
         event,
         "欢迎下一位。已经开了"
-        + str(strmsg[id][2])
+        + strmsg[2]
         + "枪，还剩"
-        + str(strmsg[id][1] - strmsg[id][3])
+        + str(int(strmsg[1]) - int(strmsg[3]))
         + "发子弹。",
     )
+
+
+clearshoot = on_command("清空弹仓", rule=None, priority=2)
+
+
+@clearshoot.handle()
+async def _(bot: Bot, event: Event, state: T_State):
+    message_type = str(event.dict()["message_type"])
+    if message_type == "group":
+        id = str(event.dict()["group_id"])
+        # ru = Path(".") / "apeiria_network" / "config" / "ru" / "group" / "ru.json"
+    elif message_type == "private":
+        id = event.get_user_id()
+    try:
+        strmsg = r.get("ru"+id).split(',')
+    except:
+        r.set("ru"+id, ','.join(['0','0','0','0']))
+        strmsg = r.get("ru"+id).split(',')
+    strmsg[0] = strmsg[1] = strmsg[2] = strmsg[3] = '0'
+    r.set("ru"+id, ','.join(strmsg))
+    r.set("death" + id, "")
+    r.set("alive" + id, "")
+    r.set("magzine" + id, "")
+    await clearshoot.finish("已清空弹仓")
