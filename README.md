@@ -11,6 +11,7 @@
    Windows 下激活虚拟环境: `/.venv/Scripts/activate.bat`  
 2. 安装依赖包 `pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/`
 3. 启动 bot `nb run`
+      需要额外安装redis
 
 为配合 Nonebot2 使用，还需要安装搭建 Go-Cqhttp 使用：https://github.com/Mrs4s/go-cqhttp  
 这是我的个人博客：http://blog.patchouli-go.cn:8109/?p=57
