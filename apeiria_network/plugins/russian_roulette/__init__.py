@@ -41,10 +41,8 @@ async def _(bot: Bot, event: Event, state: T_State):
     # 来源判断
     if message_type == "group":
         id = str(event.dict()["group_id"])
-        # ru = Path(".") / "apeiria_network" / "config" / "ru" / "group" / "ru.json"
     elif message_type == "private":
         id = event.get_user_id()
-        # ru = Path(".") / "apeiria_network" / "config" / "ru" / "private" / "ru.json"
     # strmsg = [0, 0, 0, 0]
     # ru_status = strmsg[0]
     # bullets_num = strmsg[1]
@@ -71,8 +69,6 @@ async def _(bot: Bot, event: Event, state: T_State):
             strmsg[2] = '0'
             strmsg[3] = '0'
             # print(strmsg)
-            # ru_json_file_w = open(ru, mode="w", encoding="utf-8")
-            # json.dump(strmsg, ru_json_file_w, ensure_ascii=False)
             r.set("ru"+id, ','.join(strmsg))
             r.set("death" + id, "")
             r.set("alive" + id, "")
@@ -98,10 +94,8 @@ async def _(bot: Bot, event: Event, state: T_State):
         # 判断会话状态是否为active
         if strmsg[0] == '1':
             state["bullets_num"] = strmsg[1]
-            # state["ru"] = ru
             state["id"] = id
         elif strmsg[0] == '0':
-            # state["ru"] = ru
             state["id"] = id
 
 
@@ -113,7 +107,6 @@ async def _(bot: Bot, event: Event, state: T_State):
         bullets_num = int(state["bullets_num"])
     except:
         await shoot.finish(randomNegative() + "请输入1到6以内的数字重试")
-    # ru = state["ru"]
     id = state["id"]
     strmsg = r.get("ru"+id).split(',')
     # 子弹数非法结束
@@ -147,11 +140,8 @@ async def _(bot: Bot, event: Event, state: T_State):
         r.set("death" + id, "")
     if r.get("alive" + id) == None:
         r.set("alive" + id, "")
-    # print(r.get("magazine"+id))
     magazine = r.get("magazine" + id).split(",")
-    # print(magazine)
     
-    # if randint(1, (6 - strmsg[id][2])) <= strmsg[id][1]:
     if magazine[0] == "1":
         # 随机1到剩余开枪次数 小于等于子弹数量时命中
         # 命中 开枪次数+1 击中+1
@@ -166,11 +156,10 @@ async def _(bot: Bot, event: Event, state: T_State):
             ["砰！枪响人亡", "你死了"],
             ["开完这枪，我就回家和老婆结婚\n——你如是宣言到", "汝之妻，吾养之\nYou Died...."],
             ["你是一个有故事的人，但是子弹并不想知道这些\n它只看见了白花花的脑浆", "你死了"],
-            ["啦哒哒哒哒！啦哒哒哒哒！", "You Died...."],
+            ["啦哒哒哒哒哒！啦哒哒哒哒哒！", "You Died...."],
             ["BOOOOOM HEADSHOT!!", "You Died...."],
             ["哒哒哒哒哒！", "啊，你死了"],
         ]
-        # r.sadd("death"+id, event.get_session_id()+",")
         if message_type == "group":
             group_id = str(event.dict()["group_id"])
             member_info = await bot.call_api(
@@ -185,7 +174,9 @@ async def _(bot: Bot, event: Event, state: T_State):
             call = nickname
         else:
             call = card
-        r.set("death" + id, r.get("death" + id) + call + ",")
+        # 拼接字符串 等效
+        r.append("death" + id, call + ",")
+        # r.set("death" + id, r.get("death" + id) + call + ",")
         for a in msg[randint(0, len(msg) - 1)]:
             await bot.send(event, a)
     else:
@@ -204,8 +195,6 @@ async def _(bot: Bot, event: Event, state: T_State):
             # ["冰冷的子弹击中了你的牛子\n你活了下来","但是你的牛子没了，你试问\n这一切都值得吗"],
             # ["你非常的确信，枪膛里下一发是有子弹的","但是这颗子弹火药貌似受潮了~\n恭喜你捡回了一条小命"],
         ]
-        # r.sadd("alive"+id, event.get_session_id()+",")
-        # r.set("alive"+id, r.get("alive"+id)+event.get_session_id()+",")
         if message_type == "group":
             group_id = str(event.dict()["group_id"])
             member_info = await bot.call_api(
@@ -220,7 +209,9 @@ async def _(bot: Bot, event: Event, state: T_State):
             call = nickname
         else:
             call = card
-        r.set("alive" + id, r.get("alive" + id) + call + ",")
+        # 拼接字符串 等效
+        r.append("alive" + id, call + ",")
+        # r.set("alive" + id, r.get("alive" + id) + call + ",")
         for a in msg[randint(0, len(msg) - 1)]:
             await bot.send(event, a)
     if int(strmsg[3]) >= int(strmsg[1]):
@@ -233,14 +224,12 @@ async def _(bot: Bot, event: Event, state: T_State):
         for de in death:
             count.update({de: [0, death.count(de)]})
         if alive != [""]:
-            # print(alive)
             for al in alive:
                 try:
                     a = count[al][1]
                 except:
                     a = 0
                 count.update({al: [alive.count(al), a]})
-        # print(count)
         r.set("death" + id, "")
         r.set("alive" + id, "")
         r.set("magzine" + id, "")
@@ -271,7 +260,6 @@ async def _(bot: Bot, event: Event, state: T_State):
     message_type = str(event.dict()["message_type"])
     if message_type == "group":
         id = str(event.dict()["group_id"])
-        # ru = Path(".") / "apeiria_network" / "config" / "ru" / "group" / "ru.json"
     elif message_type == "private":
         id = event.get_user_id()
     try:
