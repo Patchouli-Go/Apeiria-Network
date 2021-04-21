@@ -59,6 +59,10 @@ async def _(bot: Bot, event: Event, state: T_State):
     args = str(event.get_message()).strip()
     if args:
         # 子弹数非法结束
+        try:
+            int(args)
+        except:
+            await shoot.finish(randomNegative() + "请输入1到6以内的数字重试")
         if not (int(args) >= 1 and int(args) <= 6):
             await shoot.finish(randomNegative() + "请输入1到6以内的数字重试")
         # 判断会话状态是否为active
@@ -141,7 +145,17 @@ async def _(bot: Bot, event: Event, state: T_State):
     if r.get("alive" + id) == None:
         r.set("alive" + id, "")
     magazine = r.get("magazine" + id).split(",")
-    
+    # 1 、子弹填装数 2、枪击发数 3、子弹击中数
+    # 当前子弹数量 = 子弹填装数 - 子弹击中数
+    # 当前剩余枪数 = 6 - 枪击发数
+    if((int(strmsg[1]) - int(strmsg[3])) == (6 - int(strmsg[2]))):
+        if(int(strmsg[1]) >= 6):
+            chance = randint(1,10)
+            if (chance==1):
+                magazine[0] = "0"
+                strmsg[3] = str((int(strmsg[3])+1))
+            else:
+                magazine[0] = "1"
     if magazine[0] == "1":
         # 随机1到剩余开枪次数 小于等于子弹数量时命中
         # 命中 开枪次数+1 击中+1
