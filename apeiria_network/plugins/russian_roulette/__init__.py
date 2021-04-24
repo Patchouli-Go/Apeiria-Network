@@ -1,6 +1,8 @@
 # import nonebot
 import json
 
+from nonebot.permission import SUPERUSER
+
 from apeiria_network.plugins.weather.data_source import randomNegative
 from pathlib import Path
 from nonebot import on_command, get_driver
@@ -19,6 +21,13 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 r = redis.StrictRedis(host="localhost", port=6379, decode_responses=True)
+
+MAGAZINE = """         [{t1}]
+[{t6}]              [{t2}]
+
+[{t5}]              [{t3}]
+         [{t4}]"""
+
 """
 俄罗斯转盘
 	判断会话状态是否为active
@@ -80,7 +89,7 @@ async def _(bot: Bot, event: Event, state: T_State):
             for i in range(0, 6 - int(strmsg[1])):
                 magazine.append("0")
             for i in range(0, int(strmsg[1])):
-                magazine.insert(randint(0, len(magazine)), "1")
+                magazine.insert(randint(0, len(magazine) - 1), "1")
             r.set("magazine" + id, ",".join(magazine))
             bul = choice(
                 [
@@ -129,7 +138,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         for i in range(0, 6 - int(strmsg[1])):
             magazine.append("0")
         for i in range(0, int(strmsg[1])):
-            magazine.insert(randint(0, len(magazine)), "1")
+            magazine.insert(randint(0, len(magazine) - 1), "1")
         r.set("magazine" + id, ",".join(magazine))
         bul = choice(
             [
@@ -148,8 +157,8 @@ async def _(bot: Bot, event: Event, state: T_State):
     # 1 、子弹填装数 2、枪击发数 3、子弹击中数
     # 当前子弹数量 = 子弹填装数 - 子弹击中数
     # 当前剩余枪数 = 6 - 枪击发数
-    if((int(strmsg[1]) - int(strmsg[3])) == (6 - int(strmsg[2]))):
-        if(int(strmsg[1]) >= 6):
+    if(int(strmsg[1]) >= 6):
+        if((int(strmsg[1]) - int(strmsg[3])) == (6 - int(strmsg[2]))):
             chance = randint(1,10)
             if (chance==1):
                 magazine[0] = "0"
@@ -160,6 +169,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         # 随机1到剩余开枪次数 小于等于子弹数量时命中
         # 命中 开枪次数+1 击中+1
         magazine.pop(0)
+        magazine.append("-1")
         r.set("magazine" + id, ",".join(magazine))
         strmsg[2] = str((int(strmsg[2])+1))
         strmsg[3] = str((int(strmsg[3])+1))
@@ -196,6 +206,7 @@ async def _(bot: Bot, event: Event, state: T_State):
     else:
         # miss 开枪次数+1
         magazine.pop(0)
+        magazine.append("-1")
         r.set("magazine" + id, ",".join(magazine))
         strmsg[2] = str((int(strmsg[2])+1))
         r.set("ru"+id, ','.join(strmsg))
@@ -246,7 +257,7 @@ async def _(bot: Bot, event: Event, state: T_State):
                 count.update({al: [alive.count(al), a]})
         r.set("death" + id, "")
         r.set("alive" + id, "")
-        r.set("magzine" + id, "")
+        r.set("magazine" + id, "")
         msg = ""
         i = 0
         for c in count:
@@ -285,5 +296,59 @@ async def _(bot: Bot, event: Event, state: T_State):
     r.set("ru"+id, ','.join(strmsg))
     r.set("death" + id, "")
     r.set("alive" + id, "")
-    r.set("magzine" + id, "")
+    r.set("magazine" + id, "")
     await clearshoot.finish("已清空弹仓")
+
+
+show_magazine = on_command("看看弹匣", rule=None, priority=2)
+
+
+@show_magazine.handle()
+async def _(bot: Bot, event: Event, state: T_State):
+    message_type = str(event.dict()["message_type"])
+    if message_type == "group":
+        id = str(event.dict()["group_id"])
+    elif message_type == "private":
+        id = event.get_user_id()
+    try:
+        magazine = r.get("magazine" + id).split(",")
+    except:
+        await show_magazine.finish("还没有开始俄罗斯轮盘活动哦，请输入开枪来创建活动")
+    show_result = MAGAZINE.format(
+        t1=magazine[0],
+        t2=magazine[1],
+        t3=magazine[2],
+        t4=magazine[3],
+        t5=magazine[4],
+        t6=magazine[5],
+    )
+    await show_magazine.finish(show_result)
+
+
+spin_magazine = on_command("转动弹匣", rule=None, priority=2)
+
+
+@spin_magazine.handle()
+async def _(bot: Bot, event: Event, state: T_State):
+    message_type = str(event.dict()["message_type"])
+    if message_type == "group":
+        id = str(event.dict()["group_id"])
+    elif message_type == "private":
+        id = event.get_user_id()
+    magazine = r.get("magazine" + id).split(",")
+    spin = randint(0,5)
+    magazine2 = []
+    x = 0
+    for i in magazine:
+        try:
+            magazine2.insert(x, magazine[(x+spin)])
+            # 0 1 2 3 4 5
+        except:
+            magazine2.insert(x, magazine[(x+spin-6)])
+            # spin = 1
+            # spin = 5
+            # 1 2 3 4 5 0
+            # 5 0 1 2 3 4
+        x+=1
+    r.set("magazine" + id, ",".join(magazine2))
+    await spin_magazine.finish("弹匣已转动")
