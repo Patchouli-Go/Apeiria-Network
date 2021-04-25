@@ -89,7 +89,7 @@ async def _(bot: Bot, event: Event, state: T_State):
             for i in range(0, 6 - int(strmsg[1])):
                 magazine.append("0")
             for i in range(0, int(strmsg[1])):
-                magazine.insert(randint(0, len(magazine) - 1), "1")
+                magazine.insert(randint(0, len(magazine)), "1")
             r.set("magazine" + id, ",".join(magazine))
             bul = choice(
                 [
@@ -138,7 +138,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         for i in range(0, 6 - int(strmsg[1])):
             magazine.append("0")
         for i in range(0, int(strmsg[1])):
-            magazine.insert(randint(0, len(magazine) - 1), "1")
+            magazine.insert(randint(0, len(magazine)), "1")
         r.set("magazine" + id, ",".join(magazine))
         bul = choice(
             [
