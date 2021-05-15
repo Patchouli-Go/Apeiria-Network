@@ -1,6 +1,8 @@
 # Apeiria-Network
 
 基于 Nonebot2 编写的聊天机器人
+编写环境：Centos8.3 Python3.8.8
+没有在windows上测试过，如有bug，还请体谅
 
 ## How to start
 
@@ -57,3 +59,6 @@
 
 每日天气提醒 qq 号:  
 `DAILY_WEATHER=[""]`
+
+懂？
+apikey_LOLI=''
