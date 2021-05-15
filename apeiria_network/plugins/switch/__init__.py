@@ -59,12 +59,12 @@ def _switch(args, status, event):
                 # if args in switch_reader:
                 if id in switch_reader:
                     if switch_reader[id] == status:
-                        json.dump(switch_reader, switch_json_file_w, ensure_ascii=False)
+                        json.dump(switch_reader, switch_json_file_w, ensure_ascii=False, indent=4)
                         return 'Owner，该功能无需开启。'
                 else:
                     switch_reader.update(data)
                 switch_reader[id] = status
-                json.dump(switch_reader, switch_json_file_w, ensure_ascii=False)
+                json.dump(switch_reader, switch_json_file_w, ensure_ascii=False, indent=4)
                 if status == 'on':
                     return '已为该'+message_typec+'开启功能'+args
                 elif status == 'off':

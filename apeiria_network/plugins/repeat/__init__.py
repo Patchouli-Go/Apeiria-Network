@@ -84,7 +84,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         with open(re, mode="w", encoding="utf-8") as re_json_file_w:
             # strmsg.update({id: [message, '', '', i, message_type]})
             strmsg.update({id: [message, "", "", i]})
-            json.dump(strmsg, re_json_file_w, ensure_ascii=False)
+            json.dump(strmsg, re_json_file_w, ensure_ascii=False, indent=4)
     pos = strmsg[id][3]
     if pos >= 2:
         strmsg[id][pos] = message
@@ -96,7 +96,7 @@ async def _(bot: Bot, event: Event, state: T_State):
     if strmsg[id][0] == strmsg[id][1] == strmsg[id][2]:
         strmsg[id][0] = strmsg[id][1] = strmsg[id][2] = ""
         re_json_file_w1 = open(re, mode="w", encoding="utf-8")
-        json.dump(strmsg, re_json_file_w1, ensure_ascii=False)
+        json.dump(strmsg, re_json_file_w1, ensure_ascii=False, indent=4)
         await repeat_after_me.finish(event.get_message())
     re_json_file_w2 = open(re, mode="w", encoding="utf-8")
-    json.dump(strmsg, re_json_file_w2, ensure_ascii=False)
+    json.dump(strmsg, re_json_file_w2, ensure_ascii=False, indent=4)
